@@ -39,6 +39,10 @@
         <h1>压缩后>>></h1>
         <img id='target' src="" alt="">
       </div>
+      <div>
+          <h1>blob>>></h1>
+          <img id='blob' src="" alt="">
+        </div>
     </div>
   </div>
   <script>
@@ -98,7 +102,8 @@
     var inputFile = document.getElementById('fileInput');
     var original = document.getElementById('original');
     var target = document.getElementById('target');
-
+    var blob = document.getElementById('blob');
+    
     inputFile.addEventListener('change', function(e){
       fileReadasBase64(e.target.files[0])
         .then((base64) => {
@@ -108,8 +113,10 @@
          
           img.onload = function(){
             var bl = dataURLtoBlob(compress(img, 0.1))
-            var test = window.open('');
-            test.location.href = window.URL.createObjectURL(bl);
+            var url = window.URL.createObjectURL(bl);
+            // var test = window.open('');
+            // test.location.href = window.URL.createObjectURL(bl);
+            blob.src = url
             target.src = compress(img, 0.1)
           }
           
