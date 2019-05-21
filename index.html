@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>img compress</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
+  <style>
+    .box{
+      /* display: flex; */
+    }
+    img{
+      display: inline-block;
+      width: 500px;
+      border: 1px solid #ccc;
+    }
+    h1{
+      vertical-align: top;
+      display:inline-block;
+    }
+    .con{
+      vertical-align: top;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+      <label for="">选择压缩图片</label> <input id='fileInput' type="file" >
+    <div class="box">
+      <div class="con">
+        <h1 >原图>>></h1>
+        <img id='original' src=""  alt="">
+      </div>
+      <br>
+      <br><br>
+      <div>
+        <h1>压缩后>>></h1>
+        <img id='target' src="" alt="">
+      </div>
+    </div>
+  </div>
+  <script>
+    /**
+     * 图片压缩
+     * @param image type element
+     * @param quality type number [0-1]值越小，所绘制出的图像越模糊
+     * return base64 图片的base64编码  格式为 “data:image/png;base64,****”,
+     */
+    var compress = function(image, quality) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const _with = 1024;
+      const r = image.naturalWidth / image.naturalHeight;
+
+      canvas.width = _with;
+      canvas.height = _with / r;
+      ctx.drawImage(image, 0, 0, _with, _with / r);
+      if (!quality || quality > 1 || quality < 0) {
+        quality = 0.7;
+      }
+      // 1.canvas.toDataURL 返回的默认格式就是 image/png格式，如果第一个参数type是image/ jpeg的话，第二个参数encoderOptions就可以用来设置图片的压缩质量
+      // 2.base64 的格式为 “data:image/png;base64,****”
+      return canvas.toDataURL('image/jpeg', quality || 0.7);
+    }
+
+    const fileReadasBase64 = function(file){
+      return new Promise(function(resolve,reject){
+        const reader = new FileReader();
+        reader.addEventListener('load',function(e){
+          resolve(reader.result)
+        })
+        reader.addEventListener('error',function(e){
+          reject(e)
+        })
+        reader.readAsDataURL(file)
+      })
+      
+    }
+
+    var inputFile = document.getElementById('fileInput');
+    var original = document.getElementById('original');
+    var target = document.getElementById('target');
+
+    inputFile.addEventListener('change', function(e){
+      fileReadasBase64(e.target.files[0])
+        .then((base64) => {
+          original.src = base64
+          var img = document.createElement('img')
+          img.src = base64
+          img.onload = function(){
+            target.src = compress(img, 0.1)
+          }
+          
+        })
+    })
+
+
+  </script>
+</body>
+</html>
