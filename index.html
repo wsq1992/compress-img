@@ -113,8 +113,8 @@
          
           img.onload = function(){
             var bl = dataURLtoBlob(base64)
-            var url = window.URL.createObjectURL(base64);
-            // var test = window.open('');
+            var url = window.URL.createObjectURL(bl);
+            var test = window.open('');
             // test.location.href = window.URL.createObjectURL(bl);
             blob.src = url
             target.src = compress(img, 0.1)
