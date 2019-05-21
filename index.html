@@ -64,6 +64,22 @@
       // 2.base64 的格式为 “data:image/png;base64,****”
       return canvas.toDataURL('image/jpeg', quality || 0.7);
     }
+    /**
+     * base64数据转换成Blob数据
+     * @param dataurl data:text/plain;base64,YWFhYWFhYQ==
+     * @return blob
+     */
+     const dataURLtoBlob = function(dataurl) {
+      let arr = dataurl.split(',');
+      let mime = arr[0].match(/:(.*?);/)[1];
+      let bstr = atob(arr[1]);
+      let n = bstr.length;
+      let u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
+    };
 
     const fileReadasBase64 = function(file){
       return new Promise(function(resolve,reject){
@@ -89,13 +105,18 @@
           original.src = base64
           var img = document.createElement('img')
           img.src = base64
+         
           img.onload = function(){
+            var bl = dataURLtoBlob(compress(img, 0.1))
+            var test = window.open('');
+            test.location.href = window.URL.createObjectURL(bl);
             target.src = compress(img, 0.1)
           }
           
         })
     })
 
+  
 
   </script>
 </body>
